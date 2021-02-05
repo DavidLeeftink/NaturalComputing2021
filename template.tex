@@ -1,0 +1,94 @@
+\documentclass{article}
+\setlength{\parskip}{\baselineskip}%
+\setlength{\parindent}{0pt}%
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{multicol}
+\newcounter{countitems}
+\newcounter{nextitemizecount}
+\newcommand{\setupcountitems}{%
+  \stepcounter{nextitemizecount}%
+  \setcounter{countitems}{0}%
+  \preto\item{\stepcounter{countitems}}%
+}
+\makeatletter
+\newcommand{\computecountitems}{%
+  \edef\@currentlabel{\number\c@countitems}%
+  \label{countitems@\number\numexpr\value{nextitemizecount}-1\relax}%
+}
+\newcommand{\nextitemizecount}{%
+  \getrefnumber{countitems@\number\c@nextitemizecount}%
+}
+\newcommand{\previtemizecount}{%
+  \getrefnumber{countitems@\number\numexpr\value{nextitemizecount}-1\relax}%
+}
+\makeatother    
+\newenvironment{AutoMultiColItemize}{%
+\ifnumcomp{\nextitemizecount}{>}{3}{\begin{multicols}{2}}{}%
+\setupcountitems\begin{itemize}}%
+{\end{itemize}%
+\unskip\computecountitems\ifnumcomp{\previtemizecount}{>}{3}{\end{multicols}}{}}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{relsize}
+\usepackage{amsthm}
+\usepackage{dsfont}
+\usepackage{wrapfig}
+\usepackage{fancyhdr} 
+\usepackage{hyperref}
+\usepackage[svgnames]{xcolor}
+\usepackage[top=70pt,bottom=70pt,left=80pt,right=80pt]{geometry}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{csquotes}
+\usepackage{sectsty}
+\usepackage{apacite}
+\usepackage{xcolor}
+\newcommand\ddfrac[2]{\frac{\displaystyle #1}{\displaystyle #2}}
+\DeclareMathOperator*{\argmin}{arg\,min} 
+%\sectionfont{\fontsize{12}{15}\selectfont}
+\usepackage{todonotes}
+\newcommand{\DL}[1]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,inline]{ \textbf{David}: #1 }}
+
+\lstset{
+	breaklines=true,
+	columns=fullflexible,
+	frame=single,
+	numbers=left
+}
+\pagestyle{fancy}
+\fancyhf{}
+\cfoot{}
+\fancyhead[EL]{\nouppercase\leftmark}
+\fancyhead[OR]{\nouppercase\rightmark}
+\fancyhead[ER,OL]{\thepage}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+\renewcommand{\subsectionmark}[1]{}
+
+\date{\today}
+
+\begin{document}
+\begin{flushright}
+Natural Computing \\ 
+Assignment ... \today \\ 
+\emph{Stijn de Boer, \textit{s7654321} \\ Ron Hommelsheim \textit{s1234567} \\  David Leeftink, \textit{s4496612} }\\\end{flushright}
+
+% 1
+\section{Schemata}
+
+\begin{enumerate}[label=\alph*)]
+
+    \item 
+    \item
+\end{enumerate}
+%2 
+\section{Building Block Hypothesis}
+
+
+
+\end{document}
