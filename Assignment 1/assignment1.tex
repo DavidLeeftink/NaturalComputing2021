@@ -3,7 +3,7 @@
 \setlength{\parindent}{0pt}%
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
-\usepackage{amsmath}
+\usepackage{amsmath, amssymb}
 \usepackage{enumitem}
 \usepackage{qtree}
 \usepackage{multicol}
@@ -77,7 +77,7 @@
 \begin{flushright}
 Natural Computing \\ 
 Assignment 1 \today \\ 
-\emph{Stijn de Boer, \textit{s1003731} \\ Ron Hommelsheim \textit{s1003731} \\  David Leeftink, \textit{s4496612} }\\\end{flushright}
+\emph{Stijn de Boer, \textit{s1003731} \\ Ron Hommelsheim \textit{s1000522} \\  David Leeftink, \textit{s4496612} }\\\end{flushright}
 
 % 1
 \section{Schemata (0.5 pts)}
@@ -86,7 +86,20 @@ $\#\#010\#111$. Which of the two schemata has the highest chance to survive muta
 
 The probability that a gene is not mutated is $(1-p_m)$. For a schema to survive, all genes that belong to it should survive. Using $o(S)$ as notation for the order of a schema, this leads to the following formula: $S_m(H)=(1-p_m)^{o(H)}$
 This means that schema's with a low order are more likely to survive, as they have less genes that can be mutated.
-Since $o(A1)=4$ and $o(A2)=6$, this means that $S_m(A1)=0.01^{4}=1e-8$ while $S_m(A2)=0.01(6)=1e-12$. A1 is more likely to survive therefore.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+                 & $A_1$                  &          $A_2$         \\ \hline \hline
+        $o(A)$   & $4$                    & $6$                    \\ \hline
+        $S_m(A)$ & $(1-0.01)^4 = 0.961$   & $(1-0.01)^6 = 0.941$   \\ \hline
+    \end{tabular}
+    
+\caption{The effect of mutation on two schemata. $o(A)$ is the order of the schema and $S_m(A)$ is the chance of survival under mutation.}
+\label{tab:mut}
+\end{table}
+A1 is more likely to survive therefore.
 
 
 %2 
@@ -158,6 +171,8 @@ Compared to a (1+5) ES there is a large difference, since there are now 5 childr
 
 Since ES are concerned with optimizing real valued vectors (such as weights), we can compare the optimization behaviour with standard hill-climbing methods such as greedy or gradient-descent. Whereas these methods \textit{always} take a step in the new direction, as (1+$\lambda$) ES only takes this step if the fitness of the step is actually improved. The higher the value of $\lambda$, the more informed the next step of the iteration becomes as more directions in the search space are explored. This can be advantageous, as this allows the algorithm to 'remember' certain solutions: it does not accidentally forget the best solution due to an unfortunate sequence of mutation, recombination and cross-over operations. However it can also cause the system to be more likely to be trapped in local optima/minima. 
 
+The procedure will pick the best of the $\lambda$ children at the next time step, because of the '1' in (1+$\lambda$). As we let $\lambda$ go to infinity, all \textit{possible} children will be evaluated, and of those children the best is picked. This means that the (1+$\lambda$)-ES algorithm becomes a greedy algorithm if we let $\lambda \to \infty$, because greedy algorithms perform a sequence of locally optimal steps. 
+
 
 %6 
 \section{Memetic algorithms vs simple EAs (2.5 pts)}
@@ -179,15 +194,24 @@ Since ES are concerned with optimizing real valued vectors (such as weights), we
 \textit{Give a suitable function, terminal
 set and s-expression for the following logical and mathematical formulas}.
 \begin{enumerate}[label=\alph*)]
-    \item $(y \land true) \to ((x \lor y) \lor (z \iff (x \land y)))$ \\
-    % \Tree[.\to P [.NP [.Det \textit{the} ]
-    %           [.N\1 [.N \textit{package} ]]]
-    %       [.I\1 [.I \textsc{3sg.Pres} ]
-    %             [.VP [.V\1 [.V \textit{is} ]
-    %                       [.AP [.Deg \textit{really} ]
-    %                             [.A\1 [.A \textit{simple} ]
-    %                                   \qroof{\textit{to use}}.CP ]]]]]]
-    \item $0.234 \cdot z + x–0.789$
+    \item $(y \land true) \to ((x \lor y) \lor (z \leftrightarrow (x \land y)))$ \\
+    Function set: $\{\neg, \land, \lor, \to,\leftrightarrow \}$ \\
+    Terminal set: $\{x,y,z,true, false\}$ \\
+    LISP S-expression: $(\to \:(\land \: y \: true) (\lor \:(\lor \: x \: y) \: (\leftrightarrow \: z \: (\land \: x \: y)) ) )$ \\
+    Tree representation: 
+    \Tree[.\to . [.\land . [.y ]
+              [.true ]]
+          [.\lor . [.\lor . x y  ]
+                [.\leftrightarrow. [z. [.\land . x y  ]] ]]]
+    \item $0.234 \cdot z + x–0.789$ \\ 
+    Function set: $\{+, *, -, \div\}$ \\ 
+    Terminal set: $\{x, z\} \cup \mathbb{R}$ \\ 
+    LISP s-expression: $(+ \:(*\:0.234 \:z) \:(- \: x \:0.789)  )$ \\
+    Tree representation: 
+    \Tree[.+  [.* [.0.234 ]
+              [.z ]]
+          [.-  [.x ]
+                [.0.789. ]]]
 \end{enumerate}
 
 %8
@@ -195,13 +219,13 @@ set and s-expression for the following logical and mathematical formulas}.
 \textit{Implement a GP program for finding a
 symbolic expression } \\ 
 
-The implemention of the program is made using the python library DEAP \cite{deap}. The implementation can be found at \url{https://github.com/DavidLeeftink/NaturalComputing2021/blob/main/Assignment\%201/deap_experiment.ipynb}. Jupyter notebooks can be run by downloading the conda package; further instructions on how to install the notebook are detailed at \url{https://jupyter.org/install}. All other required packages are automatically installed by executing the code. Note that parts of code are copied from the DEAP package, to prevent additional imports. We do not claim to have written any of the functionality by the package, and merely use it to compute the optimal genetic programming solution to the given data.
+The implementation of the program is made using the python library DEAP \cite{deap}. The implementation can be found at \url{https://github.com/DavidLeeftink/NaturalComputing2021/blob/main/Assignment\%201/deap_experiment.ipynb}. Jupyter notebooks can be run by downloading the conda package; further instructions on how to install the notebook are detailed at \url{https://jupyter.org/install}. All other required packages are automatically installed by executing the code. Note that parts of code are copied from the DEAP package, to prevent additional imports. We do not claim to have written any of the functionality by the package, and merely use it to compute the optimal genetic programming solution to the given data.
 
 The algorithm is run with the following parameters: a population size of 1000, 50 generations, $p_m = 0$, $p_c = 0.7$. In addition, we have used tournament selection with $K=3$. 
 
 The results are shown in figure \ref{fig:A1_8a1} and \ref{fig:A1_8a2} for the best generation sizes vs. generation and maximum fitness vs. generations respectively. The best solution found by the program is the following expressions: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to the function $f(x) = x^4+x^3+x^2+x$. To validate the solution, the function is visually displayed together with the observations in figure \ref{fig:A1_8a3}. This shows that the solution fits through the observations very well, and no difference between the solution and observation can be seen by eye. The good performance is validated by the low mean absolute error. Note that the optimal solution is already found before generation 10. 
 
-Whereas the mean absolute error is converging to 0, the max size of the solutions as a function of generations is increasing. This means that the longer the algorithm is run, the more complex the solutions become. This is likely to cause the system to overfit on the observations. In real-life applications, it would therefore be preferred to use cross-validation, to ensure that the model is able to generalize well to other values of $x$ that are not seen in the observed data. 
+Whereas the mean absolute error is converging to 0, the max size of the solutions as a function of generations is increasing. This means that the longer the algorithm is run, the more complex the solutions become, and is known as the 'bloat' phenomenon (also referred to as survival of the fattest). This is likely to cause the system to overfit on the observations, due to a lack of parsimony of the model. In the end, we are interested in the simplest model that can explain the same data as well as any more complex model. In real-life applications, it would therefore be preferred to use cross-validation or use complexity penalties in model selection, to ensure that the model is able to generalize well to other values of $x$ that are not seen in the observed data. 
 
 \begin{figure}[H]
     \centering
