@@ -195,27 +195,40 @@ set and s-expression for the following logical and mathematical formulas}.
 \textit{Implement a GP program for finding a
 symbolic expression } \\ 
 
+The implemention of the program is made using the python library DEAP \cite{deap}. The implementation can be found at \url{https://github.com/DavidLeeftink/NaturalComputing2021/blob/main/Assignment\%201/deap_experiment.ipynb}. Jupyter notebooks can be run by downloading the conda package; further instructions on how to install the notebook are detailed at \url{https://jupyter.org/install}. All other required packages are automatically installed by executing the code. Note that parts of code are copied from the DEAP package, to prevent additional imports. We do not claim to have written any of the functionality by the package, and merely use it to compute the optimal genetic programming solution to the given data.
+
+The algorithm is run with the following parameters: a population size of 1000, 50 generations, $p_m = 0$, $p_c = 0.7$. In addition, we have used tournament selection with $K=3$. 
+
+The results are shown in figure \ref{fig:A1_8a1} and \ref{fig:A1_8a2} for the best generation sizes vs. generation and maximum fitness vs. generations respectively. The best solution found by the program is the following expressions: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to the function $f(x) = x^4+x^3+x^2+x$. To validate the solution, the function is visually displayed together with the observations in figure \ref{fig:A1_8a3}. This shows that the solution fits through the observations very well, and no difference between the solution and observation can be seen by eye. The good performance is validated by the low mean absolute error. Note that the optimal solution is already found before generation 10. 
+
+Whereas the mean absolute error is converging to 0, the max size of the solutions as a function of generations is increasing. This means that the longer the algorithm is run, the more complex the solutions become. This is likely to cause the system to overfit on the observations. In real-life applications, it would therefore be preferred to use cross-validation, to ensure that the model is able to generalize well to other values of $x$ that are not seen in the observed data. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a3.png}
+    \caption{Genetic programming: visualization of the solution found. The final function found by the program: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to: $f(x) = x^4+x^3+x^2+x$.}
+    \label{fig:A1_8a3}
+\end{figure}
+
  \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a1.png}
-        \caption{Best of generation size as function of generations for the Genetic Programming algorithm.}
-        \label{fig:A1_8a1}
-    \end{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a2.png}
+    \caption{Maximum fitness as a function of generations (the initial generation is excluded for clearness of the plot)}
+    \label{fig:A1_8a2}
+\end{figure}
+
+ \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a1.png}
+    \caption{Best of generation size as function of generations for the Genetic Programming algorithm.}
+    \label{fig:A1_8a1}
+\end{figure}
     
-    
-     \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a2.png}
-        \caption{Maximum fitness as a function of generations (the initial generation is excluded for clearness of the plot)}
-        \label{fig:A1_8a2}
-    \end{figure}
-    
-     \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a3.png}
-        \caption{Genetic programming: visualization of the solution found. The final function found by the program is in LISP: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to: $f(x) = x^4+x^3+x^2+x$.}
-        \label{fig:A1_8a3}
-    \end{figure}
- The final function found by the program is the following expressions: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to: $f(x) = x^4+x^3+x^2+x$ 
+
+ 
+ 
+ 
+\bibliographystyle{apacite}
+\bibliography{references.bib}
 
 \end{document}
