@@ -163,6 +163,13 @@ Since ES are concerned with optimizing real valued vectors (such as weights), we
 \section{Memetic algorithms vs simple EAs (2.5 pts)}
 \begin{enumerate}[label=\alph*)]
     \item \textit{Implement a variant of this algorithm based on memetic algorithms.} \\
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{Assignment 1/Figures/A1_6a.pdf}
+        \caption{Given cities to be connected for the TSP problem.}
+        \label{fig:A1_6a}
+    \end{figure}
 
     \item \textit{On the TSP problem are memetic algorithms more effective than the simple EA’ s? } \\
 \end{enumerate}
@@ -188,5 +195,27 @@ set and s-expression for the following logical and mathematical formulas}.
 \textit{Implement a GP program for finding a
 symbolic expression } \\ 
 
+ \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a1.png}
+        \caption{Best of generation size as function of generations for the Genetic Programming algorithm.}
+        \label{fig:A1_8a1}
+    \end{figure}
+    
+    
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a2.png}
+        \caption{Maximum fitness as a function of generations (the initial generation is excluded for clearness of the plot)}
+        \label{fig:A1_8a2}
+    \end{figure}
+    
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_8a3.png}
+        \caption{Genetic programming: visualization of the solution found. The final function found by the program is in LISP: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to: $f(x) = x^4+x^3+x^2+x$.}
+        \label{fig:A1_8a3}
+    \end{figure}
+ The final function found by the program is the following expressions: \texttt{mul(add(mul(mul(x, x), x), x), sub(x, -1))}. This corresponds to: $f(x) = x^4+x^3+x^2+x$ 
 
 \end{document}
