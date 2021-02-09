@@ -28,17 +28,19 @@ def crossover(ind_a, ind_b):
     """
     # Create empty array
     offspring = np.zeros((2, M)).astype(np.int16)
+
     # Select cutpoints
     cuts = np.random.choice(M+1, size=2, replace=False)
     cutlen = np.abs(cuts[0]-cuts[1])
+
     # Take slices of parents and assign them to offspring
     slice_a = ind_a[min(cuts):max(cuts)]
     slice_b = ind_b[min(cuts):max(cuts)]
     offspring[0,:cutlen] = slice_a
     offspring[1,:cutlen] = slice_b
 
-    a_needs = np.setdiff1d(ind_b, slice_a)
-    b_needs = np.setdiff1d(ind_a, slice_b)
+    a_needs = np.setdiff1d(ind_b, slice_a, assume_unique=True)
+    b_needs = np.setdiff1d(ind_a, slice_b, assume_unique=True)
     offspring[0,cutlen:] = a_needs
     offspring[1,cutlen:] = b_needs
 
@@ -64,7 +66,6 @@ def crossover_pop(pop):
     return newpop
 
 # Mutate
-p_m = 0.1
 def swap_ind(ind, a, b):
     temp = ind[a]
     ind[a] = ind[b]
@@ -104,11 +105,11 @@ def local_search_pop(pop, quick_break = False):
         pop[i] = local_search(pop[i], quick_break)
     return pop
 
-N = 10
-p_c = 0.3
+N = 20
+p_c = 0.7
 p_m = 0.1
 def run_GA(data, do_local_search = False):
-    # Create distance matrixs
+    # Create distance matrix
     x_diff = np.subtract.outer(data[:, 0], data[:, 0])
     y_diff = np.subtract.outer(data[:, 1], data[:, 1])
     dists_sq = np.add(np.square(x_diff), np.square(y_diff))
@@ -125,32 +126,38 @@ def run_GA(data, do_local_search = False):
         pop[i] = np.random.permutation(M)
 
     # Without local search
-    iters = 100
-    fitnesses_nosearch = np.zeros((2, iters))
+    iters = 250
+    fitnesses = np.zeros((2, iters))
     for i in range(iters):
         pop = mutate_pop(crossover_pop(bts_gg(pop)))
         if do_local_search:
-            pop = local_search(pop, quick_break = True)
+            pop = local_search_pop(pop, quick_break = False)
         fitness = distances(pop)
-        fitnesses_nosearch[0, i] = np.min(fitness)
-        fitnesses_nosearch[1, i] = np.mean(fitness)
+        fitnesses[0, i] = np.min(fitness)
+        fitnesses[1, i] = np.mean(fitness)
+    best = pop[np.argmin(fitness)]
 
     fig = plt.figure(figsize=(7,5))
-    ax1 = fig.add_subplot(1,1,1)
-    ax1.plot(fitnesses_nosearch[0], label="best")
-    ax1.plot(fitnesses_nosearch[1], label="mean")
-    ax1.set_xlabel("Iteration")
-    ax1.set_xlabel("Distance")
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(fitnesses[0], label="best")
+    ax.plot(fitnesses[1], label="mean")
+    ax.set_xlabel("Iteration")
+    ax.set_xlabel("Distance")
     plt.legend()
+    plt.savefig(f"{os.getcwd()}/fitness_{M}_LS={do_local_search}.png")
 
-    plt.savefig(f"{os.getcwd()}/{M}_localSearch={do_local_search}.png")
-    plt.show()
+    fig = plt.figure(figsize=(7,5))
+    ax = fig.add_subplot(1,1,1)
+    bestroute = data[best]
+    ax.plot(bestroute[:,0], bestroute[:,1])
+    plt.savefig(f"{os.getcwd()}/route_{M}_LS={do_local_search}.png")
 
 
-data = np.loadtxt( "Evolutionary Computing attached files Jan 29, 2021 2119/file-tsp.txt")
+
+data = np.loadtxt( "Data/file-tsp.txt")
 run_GA(data, False)
 run_GA(data, True)
 
-data = np.loadtxt( "Evolutionary Computing attached files Jan 29, 2021 2119/27_cities.txt")
+data = np.loadtxt( "Data/27_cities.txt")
 run_GA(data, False)
 run_GA(data, True)
