@@ -168,7 +168,7 @@ The procedure will pick the best of the $\lambda$ children at the next time step
 
 %6 
 \section{Memetic algorithms vs simple EAs (2.5 pts)}
-The implementation of the standard EA and of the memetic algorithms are made using the python library DEAP \cite{deap}. The implementation can be found at \url{https://github.com/DavidLeeftink/NaturalComputing2021/blob/main/Assignment\%201/FILL_IN_LATER.ipynb}. Jupyter notebooks can be run by downloading the conda package; further instructions on how to install the notebook are detailed at \url{https://jupyter.org/install}. All other required packages are automatically installed by executing the code.
+The implementation of the standard EA and of the memetic algorithms are made using the python library DEAP \cite{deap}. The implementation can be found at \url{https://github.com/DavidLeeftink/NaturalComputing2021/blob/main/Assignment\%201/A1.ipynb}. Jupyter notebooks can be run by downloading the conda package; further instructions on how to install the notebook are detailed at \url{https://jupyter.org/install}. All other required packages are automatically installed by executing the code.
 
 \begin{enumerate}[label=\alph*)]
     \item \textit{Implement a variant of this algorithm based on memetic algorithms.} \\
@@ -181,7 +181,38 @@ The implementation of the standard EA and of the memetic algorithms are made usi
     \end{figure}
 
     \item \textit{On the TSP problem are memetic algorithms more effective than the simple EA’ s? } \\
-    As shown in figure \ref{fig:A1_6b} and \ref{fig:A1_6c}, the memetic algorithm converges faster to a lower distance (higher fitness). After 100 iterations, it has reached a minimum distance near 150: we believe this might be the global optimum as well. The simple EA performs a lot worse: after 1500 iterations, the best distance is near 250. The results are sensible, as the memetic algorithm is performing its search in a reduced search space namely only the local optimal solutions.  Comparing these findings with existing literature, we find that the memetic algorithm is not preferred in any TSP problem however. An important factor is the size of the problem  \cite{merz2001memetic}. In addition, \cite{merz2001memetic} claim that memetic algorithms are good at exploiting the correlation structure of landscapes. If fitness landscapes are smooth, i.e. a small change of ordering in cities leads to a small change in fitness, memetic are the preferred choice.
+    As shown in figure \ref{fig:A1_6b1} and \ref{fig:A1_6b2}, the memetic algorithm converges faster to a lower distance (higher fitness). The memetic algorithm was chosen to run for only 100 iterations, as it converges quickly and requires a much higher computation per iteration. After 100 iterations, it has reached a minimum distance near 150: we believe this might be the global optimum as well. The simple EA performs a lot worse: after 1500 iterations, the best distance is near 250. 
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_6b1.png}
+        \caption{Standard EA data set 1}
+        \label{fig:A1_6b1}
+    \end{figure}  
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_6b2.png}
+        \caption{memetic data set 1}
+        \label{fig:A1_6b2}
+    \end{figure}
+    
+    For the second data set, we have chosen the data set \texttt{27\_cities}\footnote{elib.zib.de/pub/mp-testdata/tsp/tsplib/tsp/bays29.tsp}, which contains (unlike the name suggests) 29 cities in Germany (Bavaria). The results of both algorithms are similar to the results found on the first data set. They are found in figure \ref{fig:A6_6c1} and \ref{fig:A6_6c2}.
+   
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_6b1.png}
+        \caption{Standard EA data set 2}
+        \label{fig:A1_6c1}
+    \end{figure}  
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Assignment 1/Figures/A1_6b2.png}
+        \caption{memetic data set 2}
+        \label{fig:A1_6c2}
+    \end{figure}
+    
+    The results are sensible, as the memetic algorithm is performing its search in a reduced search space namely only the local optimal solutions.  Comparing these findings with existing literature, we find that the memetic algorithm is not preferred in every TSP problem, however. An important factor is the size of the problem  \cite{merz2001memetic}. In addition, \cite{merz2001memetic} claim that memetic algorithms are good at exploiting the correlation structure of landscapes. If fitness landscapes are smooth, i.e. a small change of ordering in cities leads to a small change in fitness, memetic are the preferred choice.
     \citeA{contreras2015automatic} show that standard EA algorithms are competitive in terms of performance for problems where $N$ is high. 
 \end{enumerate}
 
