@@ -20,7 +20,7 @@ class PSO:
             self.y_lim = params['range'][0]
         else:
             self.clip = False
-]
+
 
     def step(self):
         for i in range(self.n):
