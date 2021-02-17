@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class PSO:
     def __init__(self, params):
         self.n = params['n']
@@ -24,7 +23,7 @@ class PSO:
 
     def step(self):
         for i in range(self.n):
-            r1, r2 = np.random.rand(2)
+            r1, r2 = 0.5, 0.5
             self.V[i] = self.omega*self.V[i]+self.a1*r1 * \
                 (self.X_hat[i] - self.X[i]) + self.a2*r2*(self.g_hat-self.X[i])
             self.X[i] = self.X[i] + self.V[i]
