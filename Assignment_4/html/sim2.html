@@ -11,14 +11,14 @@ body{
 </style>
 
 <!-- Sourcing the cpm build -->
-<script src="../../../examples/html/artistoo.js"></script>
-<script src="../../../examples/html/fpsmeter.min.js"></script>
+<script src="/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/aristoo/artistoo/examples/html/artistoo.js"></script>
+<script src="/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/aristoo/artistoo/examples/html/fpsmeter.min.js"></script>
 
 <script>
 "use strict"
-let cell_volume = 200
-let cell_density = 1
-let barrier_density = 0
+let cell_volume = 500
+let cell_density = 3
+let barrier_density = 2
 
 
 let config = {
@@ -46,7 +46,7 @@ let config = {
 
         // PerimeterConstraint parameters
 		LAMBDA_P: [0,2,2],					// PerimeterConstraint importance per cellkind
-		P : [0,200,20],			
+		P : [0,7*Math.sqrt(Math.PI*cell_volume),20],			
 
         LAMBDA_ACT : [0,400,400],				// ActivityConstraint importance per cellkind
 	    MAX_ACT : [0,20,0],					// Activity memory duration per cellkind

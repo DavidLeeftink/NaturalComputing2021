@@ -6,16 +6,21 @@ let max_cell_volume = 200
 let cell_volume_step = 50
 
 let min_cell_density = 2
-let max_cell_density = 2
+let max_cell_density = 3
 let cell_density_step = 1
 
-let min_barrier_density = 0
-let max_barrier_density = 0
+let min_barrier_density = 1
+let max_barrier_density = 1
 let barrier_density_step = 1
 
 let field_size_x = 210
 let field_size_y = 210
-let avg_speed_dict = {}
+
+let filename = "Assignment_4/js/sim_results/results"+(new Date())+".csv"
+fs.appendFile(filename, "cell_volume, cell_density, barrier_density, mean_speed, mean_xdir, mean_ydir \n", function (err) {
+    if (err) throw err;
+    console.log('Saved!');
+})
 
 for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_volume += cell_volume_step) {
     for (var cell_density = min_cell_density; cell_density <= max_cell_density; cell_density += cell_density_step) {
@@ -25,6 +30,9 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
             var posold = {}
             var posnew = {}
             var speeds = []
+            var dirXs = []
+            var dirYs = []
+            
             let config = {
                 ndim: 2,
                 field_size: [field_size_x, field_size_y],
@@ -40,7 +48,7 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                 V: [0, cell_volume, 1], // Target volume of each cellkind
                 IS_BARRIER: [false, false, true],
                 LAMBDA_P: [0, 2, 2], // PerimeterConstraint importance per cellkind
-                P: [0, 200, 20],
+                P : [0,7*Math.sqrt(Math.PI*cell_volume),20],			
                 LAMBDA_ACT: [0, 400, 400], // ActivityConstraint importance per cellkind
                 MAX_ACT: [0, 20, 0], // Activity memory duration per cellkind
                 ACT_MEAN: 'geometric', // Is neighborhood activity computed as a
@@ -84,6 +92,8 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                 let nrcells = 0
                 let centroids = this.C.getStat(CPM.CentroidsWithTorusCorrection)
                 let totaldist = 0
+                let total_xdirection = 0
+                let total_ydirection = 0
                 for( let i of this.C.cellIDs() ){
                     if (this.C.cellKind(i)==1){
                         if (!(i in posold)){
@@ -98,12 +108,22 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                             totaldist+=dist
                             posold[i] = posnew[i]
                             posnew[i] = centroids[i]
+
+                            // here
+                            total_xdirection -= difx
+                            total_ydirection -= dify
                         }
+        
                         nrcells++
+
                     }
                 }
                 let meandist = totaldist/nrcells
+                let meanxdirection = total_xdirection / nrcells
+                let meanydirection = total_ydirection / nrcells
                 speeds.push(meandist)
+                dirXs.push(meanxdirection)
+                dirYs.push(meanydirection)
             }
             
 
@@ -140,20 +160,21 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                     this.addGridManipulator()
                 }
                 this.makeCircularBarriers()
-
                 this.seedCellsInGrid()
             }
 
             sim.run()
-            let burnin = 100
-            let avg_speed = speeds.slice(burnin).reduce((a,b) => a+b,0) / (speeds.length-burnin)
-            console.log(avg_speed)
-            let filename = "/Assignment_4/js/sim_results/results"+(new Date())+".csv"
-            let newline = cell_volume+","+cell_density+","+barrier_density+","+avg_speed
+            let avg_speed = speeds.reduce((a,b) => a+b,0) / (speeds.length)
+            let avg_direction_x = dirXs.reduce((a,b) => a+b,0) / (dirXs.length)
+            let avg_direction_y = dirYs.reduce((a,b) => a+b,0) / (dirYs.length)
+            let newline = cell_volume+","+cell_density+","+barrier_density+","+avg_speed+","+avg_direction_x+","+avg_direction_y+"\n"
+
             console.log(newline)
+            fs.appendFile(filename, newline, function (err) {
+                if (err) throw err;
+                console.log('Saved!');
+            })
 
         }
     }
 }
-
-
