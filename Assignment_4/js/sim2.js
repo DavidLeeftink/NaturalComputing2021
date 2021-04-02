@@ -199,7 +199,7 @@ for (
           ',' +
           barrier_density +
           ',' +
-          number_of_cells +
+          nrcells +
           ',' +
           avg_speed +
           ',' +
