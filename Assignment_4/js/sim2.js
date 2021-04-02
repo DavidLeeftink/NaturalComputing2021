@@ -15,8 +15,8 @@ let barrier_density_step = 1;
 
 let nr_of_simulations = 1;
 
-let field_size_x = 210;
-let field_size_y = 210;
+let field_size_x = 300;
+let field_size_y = 300;
 
 let filename =
 	"/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/NaturalComputing2021/Assignment_4/js/sim_results/results" +
@@ -24,7 +24,7 @@ let filename =
 	".csv";
 fs.appendFile(
 	filename,
-	"cell_volume, cell_density, barrier_density, simulation_nr, number_of_cells, mean_speed, mean_xdir, mean_ydir, avg_group_velocity\n",
+	"field_size_x, field_size_y, cell_volume, cell_density, barrier_density, simulation_nr, number_of_cells, mean_speed, mean_xdir, mean_ydir, avg_group_velocity\n",
 	function (err) {
 		if (err) throw err;
 		console.log("Saved!");
@@ -205,6 +205,10 @@ for (
 					let avg_group_velocity =
 						group_velocities.reduce((a, b) => a + b, 0) / group_velocities.length;
 					let newline =
+                        field_size_x +
+						"," +
+                        field_size_y +
+						"," +
 						cell_volume +
 						"," +
 						cell_density +
