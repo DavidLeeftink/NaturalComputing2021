@@ -38,7 +38,7 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                 ],
                 LAMBDA_V: [0, 20, 0], // VolumeConstraint importance per cellkind
                 V: [0, cell_volume, 1], // Target volume of each cellkind
-                IS_BARRIER: [false, false, false],
+                IS_BARRIER: [false, false, true],
                 LAMBDA_P: [0, 2, 2], // PerimeterConstraint importance per cellkind
                 P: [0, 200, 20],
                 LAMBDA_ACT: [0, 400, 400], // ActivityConstraint importance per cellkind
@@ -148,7 +148,10 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
             let burnin = 100
             let avg_speed = speeds.slice(burnin).reduce((a,b) => a+b,0) / (speeds.length-burnin)
             console.log(avg_speed)
-            // fs.appendFile("/Assignment_4/js/sim_results/results.csv")
+            let filename = "/Assignment_4/js/sim_results/results"+(new Date())+".csv"
+            let newline = cell_volume+","+cell_density+","+barrier_density+","+avg_speed
+            console.log(newline)
+
         }
     }
 }
