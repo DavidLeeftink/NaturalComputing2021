@@ -1,0 +1,197 @@
+<!-- Page setup and title -->
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html;
+charset=UTF-8">
+<title>Stijn's cool page</title>
+<style type="text/css"> 
+body{
+    font-family: "HelveticaNeue-Light", sans-serif; padding : 15px;
+}
+</style>
+
+<!-- Sourcing the cpm build -->
+<script src="../../../examples/html/artistoo.js"></script>
+<script src="../../../examples/html/fpsmeter.min.js"></script>
+
+<script>
+"use strict"
+let cell_volume = 200
+let cell_density = 1
+let barrier_density = 0
+
+
+let config = {
+
+    // Grid settings
+    ndim : 2,
+    field_size : [210,210],
+
+    // CPM parameters and configuration
+    conf : {
+        // Three cell types:
+        // background
+        // cells
+        // obstacles
+        T : 20,                                // CPM temperature
+        torus:[true,true],
+        // Adhesion parameters:
+       J: [[NaN,0,0], [0,20,0],[0,20,0]] ,
+
+        // VolumeConstraint parameters
+        LAMBDA_V : [0,20,0],                // VolumeConstraint importance per cellkind
+        V : [0,cell_volume, 1],                        // Target volume of each cellkind
+
+        IS_BARRIER:[false, false, true],
+
+        // PerimeterConstraint parameters
+		LAMBDA_P: [0,2,2],					// PerimeterConstraint importance per cellkind
+		P : [0,200,20],			
+
+        LAMBDA_ACT : [0,400,400],				// ActivityConstraint importance per cellkind
+	    MAX_ACT : [0,20,0],					// Activity memory duration per cellkind
+		ACT_MEAN : "geometric"				// Is neighborhood activity computed as a
+												// "geometric" or "arithmetic" mean?
+    },
+
+    // Simulation setup and configuration
+    simsettings : {
+        // Cells on the grid
+        NRCELLS : [1, 1],                    // Number of cells to seed for all
+                                        // non-background cellkinds.
+
+        RUNTIME : 500,                  // Only used in node
+		CELLCOLOR : ["000000","FF0000"],
+
+        CANVASCOLOR : "eaecef",
+        ACTCOLOR : [true,false],			// Should pixel activity values be displayed?
+		SHOWBORDERS : [true,true],				// Should cellborders be displayed?
+		zoom : 2,							// zoom in on canvas with this factor.
+    }
+
+}
+
+let sim, meter
+var posold = {}
+var posnew = {}
+var speeds = []
+function initialize(){
+
+    let custommethods = {
+        initializeGrid : initializeGrid,
+        seedCellsInGrid:  seedCellsInGrid,
+        makeCircularBarriers: makeCircularBarriers,
+        logStats:logStats
+    }
+    
+    sim = new CPM.Simulation( config, custommethods )
+	meter = new FPSMeter({left:"auto", right:"5px"})
+
+    step()
+
+}
+
+function seedCellsInGrid(density, cell_type){
+
+	// Seed the right number of cells for each cellkind
+    let step_size_x = Math.floor(this.C.extents[0]/(density+1))
+    let step_size_y = Math.floor(this.C.extents[1]/(density+1))
+    var i,j
+	for(i = 0; i < cell_density+1; i += 1){
+        for(j = 0; j < cell_density+1; j += 1){
+                if(this.C.grid.pixt([i*step_size_x,j*step_size_y]) == 0){
+                    this.gm.seedCellAt(cell_type, [i*step_size_x,j*step_size_y])
+                }
+        }
+	}
+}
+
+function makeCircularBarriers(){
+    if( !this.helpClasses["gm"] ){ this.addGridManipulator() }
+    let step_size_x = Math.floor(this.C.extents[0]/(barrier_density+1))
+    let step_size_y = Math.floor(this.C.extents[1]/(barrier_density+1))
+    let r = Math.floor(Math.sqrt(cell_volume/(2*Math.PI)))
+    let r2 = r*r
+
+    var id_dict = {}
+
+    // Make a loop over a small rectangle	//
+    for(let i = -r ; i <= r; i ++){
+        for(let j = -r; j <= r; j ++)
+        {
+            // If there is a point within the radius
+            if (Math.pow(i,2)+Math.pow(j,2) <= r2){
+                // Set every equivalent point in the grid to the correct ID
+                for( let ii = 0; ii<= barrier_density+1; ii ++){
+                    for( let jj = 0;jj <= barrier_density+1; jj ++){
+                        if (!([ii,jj] in id_dict)){
+                            id_dict[[ii,jj]] = this.C.makeNewCellID(2)
+                        }
+                        this.C.grid.setpix( [i+ii*step_size_x,j+jj*step_size_y],id_dict[[ii,jj]])
+                    }
+                }
+            }
+        }	
+    }
+ console.log("test")
+}
+
+function initializeGrid(){
+	
+	// add the initializer if not already there
+	if( !this.helpClasses["gm"] ){ this.addGridManipulator() }
+    this.makeCircularBarriers()
+    this.seedCellsInGrid(cell_density,1)
+
+
+}
+
+function logStats(){
+    // count the cell IDs currently on the grid:
+    let nrcells = 0
+    let centroids = sim.C.getStat(CPM.CentroidsWithTorusCorrection)
+    let totaldist = 0
+    for( let i of sim.C.cellIDs() ){
+
+        if (sim.C.cellKind(i)==1){
+            if (!(i in posold)){
+                posold[i] = centroids[i]
+                posnew[i] = centroids[i]
+            }else{
+                let difx = posold[i][0]-posnew[i][0]
+                let dify = posold[i][1]-posnew[i][1]
+                let dist = Math.sqrt(Math.pow(difx,2)+Math.pow(dify,2))
+                totaldist+=dist
+                posold[i] = posnew[i]
+                posnew[i] = centroids[i]
+            }
+
+            nrcells++
+        }
+
+    }
+    let meandist = totaldist/nrcells
+    speeds.push(meandist)
+    console.log(meandist )
+    // divide the total by the number of cells
+    // push the distance to the list
+
+
+    console.log("\t" + nrcells )
+}
+
+function step(){
+    sim.step()
+    meter.tick()
+    logStats()
+    requestAnimationFrame( step )
+}
+</script>
+</head>
+<body onload="initialize()">
+<h1>Stijn's cool page</h1>
+<p>
+Such page, wow
+</p>
+</body>
+</html>
