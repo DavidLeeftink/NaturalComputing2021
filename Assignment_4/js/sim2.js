@@ -1,30 +1,33 @@
 let CPM = require('/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/aristoo/artistoo/build/artistoo-cjs.js')
 var fs = require('fs')
 
-let min_cell_volume = 100
-let max_cell_volume = 100
+let min_cell_volume = 200
+let max_cell_volume = 200
 let cell_volume_step = 50
 
-let min_cell_density = 1
-let max_cell_density = 1
+let min_cell_density = 2
+let max_cell_density = 2
 let cell_density_step = 1
 
-let min_barrier_density = 2
-let max_barrier_density = 2
+let min_barrier_density = 0
+let max_barrier_density = 0
 let barrier_density_step = 1
 
+let field_size_x = 210
+let field_size_y = 210
 let avg_speed_dict = {}
 
 for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_volume += cell_volume_step) {
     for (var cell_density = min_cell_density; cell_density <= max_cell_density; cell_density += cell_density_step) {
         for(var barrier_density = min_barrier_density; barrier_density <= max_barrier_density; barrier_density += barrier_density_step){
+            let i = 0
 
             var posold = {}
             var posnew = {}
             var speeds = []
             let config = {
                 ndim: 2,
-                field_size: [210, 210],
+                field_size: [field_size_x, field_size_y],
                 conf: {
                 T: 20,
                 torus: [true, true],
@@ -56,10 +59,9 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
 
             let sim = new CPM.Simulation(config,{
                 seedCellsInGrid:seedCellsInGrid,
-                logStats:logStats,
                 makeCircularBarriers:makeCircularBarriers,
                 initializeGrid:initializeGrid,
-
+                logStats:logStats,
             })
 
             function seedCellsInGrid() {
@@ -70,7 +72,7 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
                 for(i = 0; i < cell_density+1; i += 1){
                     for(j = 0; j < cell_density+1; j += 1){
                             if(this.C.grid.pixt([i*step_size_x,j*step_size_y]) == 0){
-                                this.gm.seedCellAt(cell_type, [i*step_size_x,j*step_size_y])
+                                this.gm.seedCellAt(1, [i*step_size_x,j*step_size_y])
                             }
                     }
                 }
@@ -80,31 +82,28 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
             function logStats(){
                 // count the cell IDs currently on the grid:
                 let nrcells = 0
-                let centroids = sim.C.getStat(CPM.CentroidsWithTorusCorrection)
+                let centroids = this.C.getStat(CPM.CentroidsWithTorusCorrection)
                 let totaldist = 0
-                for( let i of sim.C.cellIDs() ){
-            
-                    if (sim.C.cellKind(i)==1){
+                for( let i of this.C.cellIDs() ){
+                    if (this.C.cellKind(i)==1){
                         if (!(i in posold)){
                             posold[i] = centroids[i]
                             posnew[i] = centroids[i]
                         }else{
-                            let difx = posold[i][0]-posnew[i][0]
-                            let dify = posold[i][1]-posnew[i][1]
+                            var difx = posold[i][0]-posnew[i][0]
+                            difx += difx<-10?field_size_x:difx>10?-field_size_x:0 // Some evil torus correction
+                            var dify = posold[i][1]-posnew[i][1]
+                            dify += dify<-10?field_size_y:dify>10?-field_size_y:0 // Please don't look at me
                             let dist = Math.sqrt(Math.pow(difx,2)+Math.pow(dify,2))
                             totaldist+=dist
                             posold[i] = posnew[i]
                             posnew[i] = centroids[i]
                         }
-            
                         nrcells++
                     }
-            
                 }
                 let meandist = totaldist/nrcells
                 speeds.push(meandist)
-                console.log(meandist)
-                console.log("\t" + nrcells )
             }
             
 
@@ -138,15 +137,18 @@ for (var cell_volume = min_cell_volume; cell_volume <= max_cell_volume; cell_vol
 
             function initializeGrid() {
                 if (!this.helpClasses['gm']) {
-                this.addGridManipulator()
+                    this.addGridManipulator()
                 }
-                this.seedCellsInGrid()
                 this.makeCircularBarriers()
+
+                this.seedCellsInGrid()
             }
 
             sim.run()
-            avg_speed_dict[[cell_volume,cell_density,barrier_density]] = speeds.reduce((a,b) => a+b,0) / speeds.length
-            
+            let burnin = 100
+            let avg_speed = speeds.slice(burnin).reduce((a,b) => a+b,0) / (speeds.length-burnin)
+            console.log(avg_speed)
+            // fs.appendFile("/Assignment_4/js/sim_results/results.csv")
         }
     }
 }
