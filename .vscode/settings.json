@@ -1,0 +1,5 @@
+{
+    "editor.wrappingIndent": "indent",
+    "workbench.tree.renderIndentGuides": "none",
+    "prettier.useTabs": true
+}
