@@ -6,11 +6,11 @@ let max_cell_volume = 200;
 let cell_volume_step = 50;
 
 let min_cell_density = 1;
-let max_cell_density = 10;
+let max_cell_density = 20;
 let cell_density_step = 1;
 
 let min_barrier_density = 0;
-let max_barrier_density = 10;
+let max_barrier_density = 15;
 let barrier_density_step = 1;
 
 let nr_of_simulations = 1;
