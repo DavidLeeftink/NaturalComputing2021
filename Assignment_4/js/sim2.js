@@ -13,7 +13,7 @@ let min_barrier_density = 0;
 let max_barrier_density = 15;
 let barrier_density_step = 1;
 
-let nr_of_simulations = 1;
+let nr_of_simulations = 5;
 
 let field_size_x = 300;
 let field_size_y = 300;
