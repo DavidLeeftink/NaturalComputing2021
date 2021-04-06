@@ -13,13 +13,12 @@ let min_barrier_density = 0;
 let max_barrier_density = 15;
 let barrier_density_step = 1;
 
-let nr_of_simulations = 10;
-
+let nr_of_simulations = 5;
 let field_size_x = 300;
 let field_size_y = 300;
 
 let filename =
-	"/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/NaturalComputing2021/Assignment_4/js/sim_results/results" +
+	"/home/guus/Uni/AI_Master/Years/1/sem2/NatCo/NaturalComputing2021/Assignment_4/js/sim_results/results_(400,50)_" +
 	new Date() +
 	".csv";
 fs.appendFile(
@@ -75,7 +74,7 @@ for (
 							LAMBDA_P: [0, 2, 2], // PerimeterConstraint importance per cellkind
 							P: [0, 7 * Math.sqrt(Math.PI * cell_volume), 20],
 							LAMBDA_ACT: [0, 400, 400], // ActivityConstraint importance per cellkind
-							MAX_ACT: [0, 20, 0], // Activity memory duration per cellkind
+							MAX_ACT: [0, 400, 0], // Activity memory duration per cellkind
 							ACT_MEAN: "geometric", // Is neighborhood activity computed as a
 						},
 						simsettings: {

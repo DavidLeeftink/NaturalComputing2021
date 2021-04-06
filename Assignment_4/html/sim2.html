@@ -17,8 +17,8 @@ body{
 <script>
 "use strict"
 let cell_volume = 200
-let cell_density = 15
-let barrier_density = 14
+let cell_density = 3
+let barrier_density = 0
 
 
 let config = {
@@ -49,7 +49,7 @@ let config = {
 		P : [0,7*Math.sqrt(Math.PI*cell_volume),20],			
 
         LAMBDA_ACT : [0,400,400],				// ActivityConstraint importance per cellkind
-	    MAX_ACT : [0,20,0],					// Activity memory duration per cellkind
+	    MAX_ACT : [0,50,0],					// Activity memory duration per cellkind
 		ACT_MEAN : "geometric"				// Is neighborhood activity computed as a
 												// "geometric" or "arithmetic" mean?
     },
